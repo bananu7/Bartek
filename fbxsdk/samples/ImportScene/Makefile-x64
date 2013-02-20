@@ -1,0 +1,96 @@
+SHELL       = /bin/sh
+
+VARIANT      = release
+ifeq "$(VARIANT)" "debug"
+    GCC_DEBUG_FLAGS += -g -D_DEBUG
+    SUFFIX = d
+endif
+STATIC = 
+
+EXAMPLE     = ImportScene
+BINDIR      = ../../bin/x64/$(VARIANT)/$(EXAMPLE)/
+OBJDIR      = ../../obj/x64/$(VARIANT)/$(EXAMPLE)/
+LIBDIR      = ../../lib/gcc4/x64
+LIBFBXVERSION = 2013.3
+INCDIR      = ../../include -I../../include/kbaselib
+COMMONDIR   = ../Common
+
+TARGET      = $(BINDIR)/$(EXAMPLE)
+OBJS  = \
+	$(COMMONDIR)/Common.o\
+	./DisplayAnimation.o\
+	./DisplayCamera.o\
+	./DisplayCommon.o\
+	./DisplayGlobalSettings.o\
+	./DisplayHierarchy.o\
+	./DisplayLight.o\
+	./DisplayLink.o\
+	./DisplayMarker.o\
+	./DisplayMaterial.o\
+	./DisplayMesh.o\
+	./DisplayNurb.o\
+	./DisplayPatch.o\
+	./DisplayPivotsAndLimits.o\
+	./DisplayPose.o\
+	./DisplayShape.o\
+	./DisplaySkeleton.o\
+	./DisplayTexture.o\
+	./DisplayUserProperties.o\
+	./DisplayGenericInfo.o\
+	./DisplayLodGroup.o\
+	./main.o
+
+OBJSFINAL  = \
+	$(OBJDIR)/Common.o\
+	$(OBJDIR)/DisplayAnimation.o\
+	$(OBJDIR)/DisplayCamera.o\
+	$(OBJDIR)/DisplayCommon.o\
+	$(OBJDIR)/DisplayGlobalSettings.o\
+	$(OBJDIR)/DisplayHierarchy.o\
+	$(OBJDIR)/DisplayLight.o\
+	$(OBJDIR)/DisplayLink.o\
+	$(OBJDIR)/DisplayMarker.o\
+	$(OBJDIR)/DisplayMaterial.o\
+	$(OBJDIR)/DisplayMesh.o\
+	$(OBJDIR)/DisplayNurb.o\
+	$(OBJDIR)/DisplayPatch.o\
+	$(OBJDIR)/DisplayPivotsAndLimits.o\
+	$(OBJDIR)/DisplayPose.o\
+	$(OBJDIR)/DisplayShape.o\
+	$(OBJDIR)/DisplaySkeleton.o\
+	$(OBJDIR)/DisplayTexture.o\
+	$(OBJDIR)/DisplayUserProperties.o\
+	$(OBJDIR)/DisplayGenericInfo.o\
+	$(OBJDIR)/DisplayLodGroup.o\
+	$(OBJDIR)/main.o    
+
+LIBS        = -lm -lrt -luuid -lstdc++ -lpthread -ldl -lfbxsdk-$(LIBFBXVERSION)$(STATIC)$(SUFFIX)
+
+CC          = gcc4 
+LD          = gcc4 
+RM          = /bin/rm -f
+
+CXXFLAGS    = -m64 $(GCC_DEBUG_FLAGS) -DFBXSDK_SHARED
+LDFLAGS     = -m64 $(GCC_LINK_FLAGS)
+
+.SUFFIXES: .cxx
+
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+	mkdir -p $(BINDIR)
+	$(LD) $(LDFLAGS) -o $@ $(OBJSFINAL) -L$(LIBDIR) $(LIBS) -Wl,-rpath $(PWD)/$(LIBDIR)
+
+$(COMMONDIR)/Common.o: $(COMMONDIR)/Common.cxx
+	mkdir -p $(OBJDIR)
+	$(CC) $(CXXFLAGS) -I$(INCDIR) -c $(COMMONDIR)/Common.cxx -o $(OBJDIR)/Common.o
+
+.cxx.o:
+	mkdir -p $(OBJDIR)
+	$(CC) $(CXXFLAGS) -I$(INCDIR) -c $< -o $*.o
+	mv $*.o $(OBJDIR)
+
+clean:
+	rm -rf $(BINDIR)
+	rm -rf $(OBJDIR)
+

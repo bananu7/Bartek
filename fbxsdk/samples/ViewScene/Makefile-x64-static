@@ -1,0 +1,76 @@
+SHELL       = /bin/sh
+
+VARIANT = release
+STATIC = -static
+
+EXAMPLE     = ViewScene
+BINDIR      = ../../bin/x64/$(VARIANT)/$(EXAMPLE)/
+OBJDIR      = ../../obj/x64/$(VARIANT)/$(EXAMPLE)/
+LIBDIR      = ../../lib/gcc4/x64 -L. -L/usr/X11R6/lib64
+LIBFBXVERSION = 2013.3
+INCDIR      = ../../include -I../../include/kbaselib
+COMMONDIR   = ../Common
+
+TARGET      = $(BINDIR)/$(EXAMPLE)
+OBJS  = \
+	$(COMMONDIR)/Common.o\
+	./DrawScene.o\
+	./DrawText.o\
+	./GetPosition.o\
+	./SceneCache.o\
+	./SceneContext.o\
+	./GlFunctions.o\
+	./SetCamera.o\
+	./targa.o\
+	./main.o
+
+OBJSFINAL  = \
+	$(OBJDIR)/Common.o\
+	$(OBJDIR)/DrawScene.o\
+	$(OBJDIR)/DrawText.o\
+	$(OBJDIR)/GetPosition.o\
+	$(OBJDIR)/SceneCache.o\
+	$(OBJDIR)/SceneContext.o\
+	$(OBJDIR)/GlFunctions.o\
+	$(OBJDIR)/SetCamera.o\
+	$(OBJDIR)/targa.o\
+	$(OBJDIR)/main.o
+
+LIBS        = -lfbxsdk-$(LIBFBXVERSION)$(STATIC) -lm -lrt -luuid -lc -lstdc++ -lpthread -ldl -lglut_gcc34-amd64 -lGLEW_amd64 -lGLU -lGL -lXmu 
+
+CC          = gcc4
+LD          = gcc4
+RM          = /bin/rm -rf
+
+CFLAGS    = -m64
+CXXFLAGS    = -m64
+LDFLAGS     = -m64 $(GCC_LINK_FLAGS)
+
+.SUFFIXES: .cxx
+
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+	mkdir -p $(BINDIR)
+	$(LD) $(LDFLAGS) -o $@ $(OBJSFINAL) -L$(LIBDIR) $(LIBS)
+	cp *.fbx $(BINDIR)
+	cp FBX_ASCII_TEXTURE $(BINDIR)
+
+$(COMMONDIR)/Common.o: $(COMMONDIR)/Common.cxx
+	mkdir -p $(OBJDIR)
+	$(CC) $(CXXFLAGS) -I$(INCDIR) -c $(COMMONDIR)/Common.cxx -o $(OBJDIR)/Common.o
+
+.c.o:
+	mkdir -p $(OBJDIR)
+	$(CC) $(CFLAGS) -I$(INCDIR) -c $< -o $*.o 
+	mv $*.o $(OBJDIR)
+
+.cxx.o:
+	mkdir -p $(OBJDIR)
+	$(CC) $(CXXFLAGS) -I$(INCDIR) -c $< -o $*.o
+	mv $*.o $(OBJDIR)
+
+clean:
+	rm -rf $(BINDIR)
+	rm -rf $(OBJDIR)
+

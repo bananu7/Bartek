@@ -1,0 +1,52 @@
+SHELL       = /bin/sh
+
+VARIANT      = release
+ifeq "$(VARIANT)" "debug"
+    GCC_DEBUG_FLAGS += -g -D_DEBUG
+    SUFFIX = d
+endif
+STATIC = 
+
+EXAMPLE     = ExportScene02
+BINDIR      = ../../bin/x64/$(VARIANT)/$(EXAMPLE)/
+OBJDIR      = ../../obj/x64/$(VARIANT)/$(EXAMPLE)/
+LIBDIR      = ../../lib/gcc4/x64
+LIBFBXVERSION = 2013.3
+INCDIR      = ../../include -I../../include/kbaselib
+COMMONDIR   = ../Common
+
+TARGET      = $(BINDIR)/$(EXAMPLE)
+OBJS        = main.o $(COMMONDIR)/Common.o
+OBJSFINAL   = $(OBJDIR)/main.o $(OBJDIR)/Common.o
+
+LIBS        = -lm -lrt -luuid -lstdc++ -lpthread -ldl -lfbxsdk-$(LIBFBXVERSION)$(STATIC)$(SUFFIX)
+
+CC          = gcc4 
+LD          = gcc4 
+RM          = /bin/rm -f
+
+CXXFLAGS    = -m64 $(GCC_DEBUG_FLAGS) -DFBXSDK_SHARED
+LDFLAGS     = -m64 $(GCC_LINK_FLAGS)
+
+.SUFFIXES: .cxx
+
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+	mkdir -p $(BINDIR)
+	$(LD) $(LDFLAGS) -o $@ $(OBJSFINAL) -L$(LIBDIR) $(LIBS) -Wl,-rpath $(PWD)/$(LIBDIR)
+	cp *.jpg $(BINDIR)
+
+$(COMMONDIR)/Common.o: $(COMMONDIR)/Common.cxx
+	mkdir -p $(OBJDIR)
+	$(CC) $(CXXFLAGS) -I$(INCDIR) -c $(COMMONDIR)/Common.cxx -o $(OBJDIR)/Common.o
+
+.cxx.o:
+	mkdir -p $(OBJDIR)
+	$(CC) $(CXXFLAGS) -I$(INCDIR) -c $< -o $*.o
+	mv *.o $(OBJDIR)
+
+clean:
+	rm -rf $(BINDIR)
+	rm -rf $(OBJDIR)
+

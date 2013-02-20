@@ -1,0 +1,52 @@
+SHELL       = /bin/sh
+
+VARIANT      = release
+ifeq "$(VARIANT)" "debug"
+    GCC_DEBUG_FLAGS += -g -D_DEBUG
+    SUFFIX = d
+endif
+STATIC = -static
+
+EXAMPLE     = Transformations
+BINDIR      = ../../bin/x86/$(VARIANT)/$(EXAMPLE)/
+OBJDIR      = ../../obj/x86/$(VARIANT)/$(EXAMPLE)/
+LIBDIR      = ../../lib/gcc4/x86
+LIBFBXVERSION = 2013.3
+INCDIR      = ../../include -I../../include/kbaselib
+COMMONDIR   = ../Common
+
+TARGET      = $(BINDIR)/$(EXAMPLE)
+OBJS        = main.o DisplayCommon.o $(COMMONDIR)/Common.o
+OBJSFINAL   = $(OBJDIR)/main.o $(OBJDIR)/DisplayCommon.o $(OBJDIR)/Common.o
+
+LIBS        = -lm -lrt -luuid -lstdc++ -lpthread -ldl -lfbxsdk-$(LIBFBXVERSION)$(STATIC)$(SUFFIX)
+
+CC          = gcc4 
+LD          = gcc4 
+RM          = /bin/rm -f
+
+CXXFLAGS    = -m32 $(GCC_DEBUG_FLAGS)
+LDFLAGS     = -m32 $(GCC_LINK_FLAGS)
+
+.SUFFIXES: .cxx
+
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+	mkdir -p $(BINDIR)
+	$(LD) $(LDFLAGS) -o $@ $(OBJSFINAL) -L$(LIBDIR) $(LIBS)
+	cp *.fbx $(BINDIR)
+
+$(COMMONDIR)/Common.o: $(COMMONDIR)/Common.cxx
+	mkdir -p $(OBJDIR)
+	$(CC) $(CXXFLAGS) -I$(INCDIR) -c $(COMMONDIR)/Common.cxx -o $(OBJDIR)/Common.o
+
+.cxx.o:
+	mkdir -p $(OBJDIR)
+	$(CC) $(CXXFLAGS) -I$(INCDIR) -c $< -o $*.o
+	mv $*.o $(OBJDIR)
+
+clean:
+	rm -rf $(BINDIR)
+	rm -rf $(OBJDIR)
+
