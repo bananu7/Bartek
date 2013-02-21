@@ -38,4 +38,11 @@ LDFLAGS+=-lboost_timer
 	$(CXX) $(CPPFLAGS) $^ -o $@ $(LDFLAGS)
 
 %.o:%.cpp
-	$(CXX) $(CPPFLAGS) -c $^ -o $@
+	$(CXX) -MMD $(CPPFLAGS) -c $< -o $@
+
+.depends: $(patsubst %.cpp,%.d,$(SOURCES))
+	cat $^ > $@
+
+.PRECIOUS: $(OBJECTS)
+
+-include .depends

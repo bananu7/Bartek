@@ -32,7 +32,3 @@ So, to get it all _at once_:
     LD_LIBRARY_PATH=../../Engine/Engine:~/custom/boost/stage/lib/ ../minicraft.exe
 
 (change boost library dir according to your system)
-
-Output on my system:
-
-
