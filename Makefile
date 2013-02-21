@@ -5,3 +5,5 @@ MiniCraft: Engine
 
 Engine:
 	$(MAKE) $(MAKEFLAGS) -C Engine/Engine
+
+.PHONY: MiniCraft Engine
