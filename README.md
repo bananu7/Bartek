@@ -19,7 +19,9 @@ To make following upstream slightly less painful, I decided to use submodules:
 
      Bartek/
         shared.mak  -- general variables/rules
+        fbxsdk/     -- external SDK from Autodesk
         Makefile    -- toplevel make file
+
         Engine/     -- submodule
         Minicraft/  -- submodule
 
