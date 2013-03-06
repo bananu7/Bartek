@@ -1,4 +1,3 @@
-
 Bartek
 ======
 
@@ -10,7 +9,7 @@ Build requirements
 
 Possibly slightly redundant, and slightly incomplete of non-bleedingly-obvious dependencies:
 
-   apt-get install freeglut3 freeglut3-dev glew-utils lib3ds-1-3 lib3ds-dev libfreeimage3 libfreeimage-dev libglew-dev libglm-dev libsoil1 libsoil-dev luakit
+   apt-get install glew-utils lib3ds-1-3 lib3ds-dev libfreeimage3 libfreeimage-dev libglew-dev libglm-dev
 
 Repo structure
 ==============
